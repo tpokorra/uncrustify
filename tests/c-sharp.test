@@ -33,6 +33,7 @@
 10080 ben.cfg                  cs/property.cs
 
 10090 ben.cfg                  cs/string_multi.cs
+10095 ben.cfg                  cs/string_interpolation.cs
 
 10100 bug_600.cfg              cs/bug_600.cs
 10101 sf607.cfg                cs/sf607.cs
