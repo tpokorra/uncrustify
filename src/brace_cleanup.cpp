@@ -665,6 +665,12 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
    c_token_t parent;
    chunk_t   *vbrace;
 
+   /* "catch": optional "when" after optional paren */
+   if (frm->pse[frm->pse_tos].stage == BS_CATCH_PAREN)
+   {
+      return(true);
+   }
+
    /* Turn an optional paren into either a real paren or a brace */
    if (frm->pse[frm->pse_tos].stage == BS_OP_PAREN1)
    {
@@ -719,7 +725,7 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
       {
          /* Replace CT_TRY with CT_CATCH on the stack & we are done */
          frm->pse[frm->pse_tos].type  = pc->type;
-         frm->pse[frm->pse_tos].stage = (pc->type == CT_CATCH) ? BS_OP_PAREN1 : BS_BRACE2;
+         frm->pse[frm->pse_tos].stage = (pc->type == CT_CATCH) ? BS_CATCH_WHEN : BS_BRACE2;
          print_stack(LBCSSWAP, "=Swap   ", frm, pc);
          return(true);
       }
@@ -729,6 +735,17 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
       print_stack(LBCSPOP, "-TRY-CCS ", frm, pc);
       if (close_statement(frm, pc))
       {
+         return(true);
+      }
+   }
+
+   /* Check for optional paren and optional CT_WHEN after CT_CATCH */
+   if (frm->pse[frm->pse_tos].stage == BS_CATCH_WHEN)
+   {
+      if (pc->type == CT_PAREN_OPEN) // this is for the paren after "catch"
+      {
+         frm->pse[frm->pse_tos].type  = pc->type;
+         frm->pse[frm->pse_tos].stage = BS_CATCH_PAREN;
          return(true);
       }
    }
