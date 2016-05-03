@@ -9,5 +9,15 @@ abc" + "def";
         var z = "" +
 @"
 ";
+   var a =
+        @"
+        line 1
+        line 2
+        "
+        +
+        "test" +
+        @"
+        line n
+        "                     ;
     }
 }
