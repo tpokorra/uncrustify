@@ -711,6 +711,16 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
       frm->pse[frm->pse_tos].stage = BS_BRACE2;
    }
 
+   if (frm->pse[frm->pse_tos].stage == BS_CATCH_PAREN)
+   {
+      if (pc->type == CT_PAREN_CLOSE)
+      {
+         frm->pse[frm->pse_tos].type  = CT_CATCH;
+         frm->pse[frm->pse_tos].stage = BS_CATCH_WHEN;
+         return true;
+      }
+   }
+
    /* Check for CT_CATCH or CT_FINALLY after CT_TRY or CT_CATCH */
    while (frm->pse[frm->pse_tos].stage == BS_CATCH)
    {
@@ -718,7 +728,7 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
       {
          /* Replace CT_TRY with CT_CATCH on the stack & we are done */
          frm->pse[frm->pse_tos].type  = pc->type;
-         frm->pse[frm->pse_tos].stage = (pc->type == CT_CATCH) ? BS_OP_PAREN1 : BS_BRACE2;
+         frm->pse[frm->pse_tos].stage = (pc->type == CT_CATCH) ? BS_CATCH_WHEN : BS_BRACE2;
          print_stack(LBCSSWAP, "=Swap   ", frm, pc);
          return(true);
       }
@@ -729,6 +739,33 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
       if (close_statement(frm, pc))
       {
          return(true);
+      }
+   }
+
+   /* Check for optional paren and optional CT_WHEN after CT_CATCH */
+   if (frm->pse[frm->pse_tos].stage == BS_CATCH_WHEN)
+   {
+      if (pc->type == CT_PAREN_OPEN) // this is for the paren after "catch"
+      {
+         frm->pse[frm->pse_tos].type  = pc->type;
+         frm->pse[frm->pse_tos].stage = BS_CATCH_PAREN;
+         return(true);
+      }
+      else if (pc->type == CT_WHEN)
+      {
+         frm->pse[frm->pse_tos].type  = pc->type;
+         frm->pse[frm->pse_tos].stage = BS_OP_PAREN1;
+         return(true);
+      }
+      else if (pc->type == CT_BRACE_OPEN)
+      {
+         /* Remove the CT_TRY and close the statement */
+         frm->pse_tos--;
+         print_stack(LBCSPOP, "-TRY-CCS ", frm, pc);
+         if (close_statement(frm, pc))
+         {
+            return(true);
+         }
       }
    }
 
