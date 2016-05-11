@@ -665,12 +665,6 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
    c_token_t parent;
    chunk_t   *vbrace;
 
-   /* "catch": optional "when" after optional paren */
-   if (frm->pse[frm->pse_tos].stage == BS_CATCH_PAREN)
-   {
-      return(true);
-   }
-
    /* Turn an optional paren into either a real paren or a brace */
    if (frm->pse[frm->pse_tos].stage == BS_OP_PAREN1)
    {
@@ -718,6 +712,16 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
       frm->pse[frm->pse_tos].stage = BS_BRACE2;
    }
 
+   if (frm->pse[frm->pse_tos].stage == BS_CATCH_PAREN)
+   {
+      if (pc->type == CT_PAREN_CLOSE)
+      {
+         frm->pse[frm->pse_tos].type  = CT_CATCH;
+         frm->pse[frm->pse_tos].stage = BS_CATCH_WHEN;
+         return true;
+      }
+   }
+
    /* Check for CT_CATCH or CT_FINALLY after CT_TRY or CT_CATCH */
    while (frm->pse[frm->pse_tos].stage == BS_CATCH)
    {
@@ -747,6 +751,22 @@ static bool check_complex_statements(struct parse_frame *frm, chunk_t *pc)
          frm->pse[frm->pse_tos].type  = pc->type;
          frm->pse[frm->pse_tos].stage = BS_CATCH_PAREN;
          return(true);
+      }
+      else if (pc->type == CT_WHEN)
+      {
+         frm->pse[frm->pse_tos].type  = pc->type;
+         frm->pse[frm->pse_tos].stage = BS_OP_PAREN1;
+         return(true);
+      }
+      else if (pc->type == CT_BRACE_OPEN)
+      {
+         /* Remove the CT_TRY and close the statement */
+         frm->pse_tos--;
+         print_stack(LBCSPOP, "-TRY-CCS ", frm, pc);
+         if (close_statement(frm, pc))
+         {
+            return(true);
+         }
       }
    }
 

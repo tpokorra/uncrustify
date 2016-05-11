@@ -9,7 +9,7 @@ class Test
       }
       catch (Exception e)
       {
-         int j = - 1;
+         int j = -1;
       }
       try
       {
@@ -17,7 +17,7 @@ class Test
       }
       catch
       {
-         int j = - 1;
+         int j = -1;
       }
       try
       {
@@ -25,7 +25,7 @@ class Test
       }
       catch when (DateTime.Now.DayOfWeek == DayOfWeek.Saturday)
       {
-         int j = - 1;
+         int j = -1;
       }
       try
       {
@@ -33,7 +33,7 @@ class Test
       }
       catch (Exception e) when (DateTime.Now.DayOfWeek == DayOfWeek.Saturday)
       {
-         int j = - 1;
+         int j = -1;
       }
    }
 }
