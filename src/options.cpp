@@ -596,6 +596,8 @@ void register_options(void)
                   "Indent based on the paren open instead of the brace open in '({\\n', default is to indent by brace.");
    unc_add_option("indent_cs_delegate_brace", U0_indent_cs_delegate_brace, AT_BOOL,
                   "indent a C# delegate by another level, default is to not indent by another level.");
+   unc_add_option("indent_array_init_brace", U0_indent_array_init_brace, AT_BOOL,
+                  "indent an array initialization by another level, default is to not indent by another level.");
    unc_add_option("indent_namespace", UO_indent_namespace, AT_BOOL,
                   "Whether the 'namespace' body is indented");
    unc_add_option("indent_namespace_single_indent", UO_indent_namespace_single_indent, AT_BOOL,
