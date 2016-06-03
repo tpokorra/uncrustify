@@ -86,7 +86,7 @@ else:
 # bit 0: show a diff on unstable or failures
 # bit 1: show passes
 # bit 2: show commands
-log_level = 7
+log_level = 0
 
 def usage_exit():
 	print("Usage: \n" + sys.argv[0] + " testfile")
