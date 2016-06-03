@@ -549,9 +549,9 @@ void indent_text(void)
    int                sql_orig_col = 0;
    bool               in_func_def  = false;
    c_token_t          memtype;
-   bool               in_delegate     = false;
-   int                delegate_column = 0;
-   bool               in_array_init   = false;
+   bool               in_delegate          = false;
+   int                delegate_column      = 0;
+   int                in_func_array_init   = 0;
 
    memset(&frm, 0, sizeof(frm));
    cpd.frame_count = 0;
@@ -977,13 +977,21 @@ void indent_text(void)
          delegate_column = pc->column_indent;
       }
 
-      if (pc->type == CT_TSQUARE) {
-          in_array_init = true;
-      }
-
       if (pc->type == CT_SEMICOLON) {
          in_delegate = false;
-         in_array_init = false;
+      }
+
+      // in_func_array_init: 0: false, 1: array initialisation in function call, 2: fparen open
+      if (pc->type == CT_FPAREN_OPEN && in_func_array_init == 0) {
+          in_func_array_init = 2;
+      }
+
+      if (pc->type == CT_TSQUARE && in_func_array_init == 2) {
+          in_func_array_init = 1;
+      }
+
+      if (pc->type == CT_FPAREN_CLOSE) {
+         in_func_array_init = 0;
       }
 
       if (pc->type == CT_BRACE_CLOSE)
@@ -1030,7 +1038,7 @@ void indent_text(void)
          frm.level++;
          indent_pse_push(frm, pc);
 
-         if (cpd.settings[U0_indent_array_init_brace].b && in_array_init)
+         if (in_func_array_init == 1)
          {
             frm.pse[frm.pse_tos].brace_indent = 1 + ((pc->brace_level+1) * indent_size);
 
@@ -1040,7 +1048,8 @@ void indent_text(void)
             frm.pse[frm.pse_tos].indent_tmp   = frm.pse[frm.pse_tos].indent;
 
             frm.pse[frm.pse_tos - 1].indent_tmp = frm.pse[frm.pse_tos].indent_tmp;
-            in_array_init = false;
+
+            in_func_array_init = 0;
          }
          else if (cpd.settings[U0_indent_cs_delegate_brace].b && in_delegate)
          {

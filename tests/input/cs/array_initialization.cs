@@ -4,6 +4,9 @@ void foo()
 {
 int[] = new int[] {1,2,3};
 
+funcwithverylongname(1,
+2,3);
+
 funcwithverylongname(new int[] {1,2,3});
 
 funcwithverylongname(new int[]
