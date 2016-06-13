@@ -27,5 +27,13 @@ void foo()
 	myCallback =
 		new MyCallback(
 			delegate
+			{ return true; });
+	myCallback =
+		new MyCallback(
+			delegate
+			{ return true; });
+	myCallback =
+		new MyCallback(
+			delegate
 				{ return true; });
 }
