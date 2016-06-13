@@ -1060,14 +1060,14 @@ void indent_text(void)
 
             in_func_array_init = 0;
          }
-         else if (cpd.settings[U0_indent_cs_delegate_brace].a == AV_IGNORE && in_delegate)
+         else if (cpd.settings[U0_indent_cs_delegate_brace].a == AV_IGNORE && in_delegate && (cpd.lang_flags & LANG_CS))
          {
             if (pc->orig_col > deleg_orig_col && pc->orig_line != deleg_orig_line)
             {
                // if delegate keyword first on new line
                if (delegate_column != 0)
                {
-                  frm.pse[frm.pse_tos].brace_indent = delegate_column + indent_size;
+                  frm.pse[frm.pse_tos].brace_indent = delegate_column;
                }
                else
                {
@@ -1095,7 +1095,7 @@ void indent_text(void)
             frm.pse[frm.pse_tos - 1].indent_tmp = frm.pse[frm.pse_tos].indent_tmp;
             in_delegate = false;
          }
-         else if (cpd.settings[U0_indent_cs_delegate_brace].a == AV_ADD && in_delegate)
+         else if (cpd.settings[U0_indent_cs_delegate_brace].a == AV_ADD && in_delegate && (cpd.lang_flags & LANG_CS))
          {
             // if delegate keyword first on new line
             if (delegate_column != 0)
