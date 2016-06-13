@@ -94,6 +94,9 @@ indent_brace_parent                       { False, True }
 indent_paren_open_brace                   { False, True }
   Indent based on the paren open instead of the brace open in '({\n', default is to indent by brace.
 
+indent_cs_delegate_brace                  { Ignore, Add, Remove, Force }
+  indent a C# delegate by another level, default is to ignore.
+
 indent_namespace                          { False, True }
   Whether the 'namespace' body is indented
 

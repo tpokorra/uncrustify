@@ -16,6 +16,14 @@ void foo()
 	{
 		func();
 	});
+	funcwithverylongname(delegate(int i)
+	{
+		func();
+	});
+	funcwithverylongname(delegate(int i)
+	{
+		func();
+	});
 	myCallback =
 		new MyCallback(
 			delegate
