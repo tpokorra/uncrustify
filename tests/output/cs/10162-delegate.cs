@@ -5,21 +5,21 @@ void foo()
 	obj.cb += () => { };
 
 	funcwithverylongname(() =>
-		{
-			func();
-		});
+	{
+		func();
+	});
 	funcwithverylongname(delegate
-		{
-			func();
-		});
+	{
+		func();
+	});
 	funcwithverylongname(delegate(int i)
-		{
-			func();
-		});
+	{
+		func();
+	});
 	funcwithverylongname(delegate(int i)
-		{
-			func();
-		});
+	{
+		func();
+	});
 	funcwithverylongname(delegate(int i)
 		{
 			func();

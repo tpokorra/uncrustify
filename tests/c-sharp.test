@@ -53,6 +53,7 @@
 10628 sf628.cfg                cs/sf628.cs
 10160 cs_delegate_default.cfg  cs/delegate.cs
 10161 cs_delegate_indent.cfg   cs/delegate.cs
+10162 cs_delegate_ignore.cfg   cs/delegate.cs
 10170 array_init_default.cfg   cs/array_initialization.cs
 10171 array_init_align.cfg     cs/array_initialization.cs
 12001 bug_620.cfg              cs/bug_620.cs

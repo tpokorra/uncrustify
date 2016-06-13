@@ -551,6 +551,8 @@ void indent_text(void)
    c_token_t          memtype;
    bool               in_delegate          = false;
    int                delegate_column      = 0;
+   UINT32             deleg_orig_col       = 0;
+   UINT32             deleg_orig_line      = 0;
    int                in_func_array_init   = 0;
 
    memset(&frm, 0, sizeof(frm));
@@ -975,6 +977,13 @@ void indent_text(void)
       if (pc->type == CT_DELEGATE || pc->type == CT_LAMBDA) {
          in_delegate = true;
          delegate_column = pc->column_indent;
+         chunk_t* line_beginning = pc;
+         deleg_orig_line = pc->orig_line;
+         while (line_beginning != NULL && line_beginning->orig_line == pc->orig_line)
+         {
+            deleg_orig_col = line_beginning->orig_col;
+            line_beginning = line_beginning->prev;
+         }
       }
 
       if (pc->type == CT_SEMICOLON) {
@@ -1051,7 +1060,42 @@ void indent_text(void)
 
             in_func_array_init = 0;
          }
-         else if (cpd.settings[U0_indent_cs_delegate_brace].b && in_delegate)
+         else if (cpd.settings[U0_indent_cs_delegate_brace].a == AV_IGNORE && in_delegate)
+         {
+            if (pc->orig_col > deleg_orig_col && pc->orig_line != deleg_orig_line)
+            {
+               // if delegate keyword first on new line
+               if (delegate_column != 0)
+               {
+                  frm.pse[frm.pse_tos].brace_indent = delegate_column + indent_size;
+               }
+               else
+               {
+                  frm.pse[frm.pse_tos].brace_indent = 1 + ((pc->brace_level+1) * indent_size);
+               }
+            }
+            else
+            {
+               // if delegate keyword first on new line
+               if (delegate_column != 0)
+               {
+                  frm.pse[frm.pse_tos].brace_indent = delegate_column + indent_size;
+               }
+               else
+               {
+                  frm.pse[frm.pse_tos].brace_indent = 1 + ((pc->brace_level) * indent_size);
+               }
+            }
+
+            indent_column                     = frm.pse[frm.pse_tos].brace_indent;
+            frm.pse[frm.pse_tos].indent       = indent_column + indent_size;
+            frm.pse[frm.pse_tos].indent_tab   = frm.pse[frm.pse_tos].indent;
+            frm.pse[frm.pse_tos].indent_tmp   = frm.pse[frm.pse_tos].indent;
+
+            frm.pse[frm.pse_tos - 1].indent_tmp = frm.pse[frm.pse_tos].indent_tmp;
+            in_delegate = false;
+         }
+         else if (cpd.settings[U0_indent_cs_delegate_brace].a == AV_ADD && in_delegate)
          {
             // if delegate keyword first on new line
             if (delegate_column != 0)
